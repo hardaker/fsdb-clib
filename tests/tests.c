@@ -45,6 +45,7 @@ void test_header_parsing() {
     assert(strcmp(s->columns[2], "three") == 0);
     assert(s->columns[3] == NULL);
 
+    fsdb_free_context(s);
 }
 
 int main(int argc, char **argv) {

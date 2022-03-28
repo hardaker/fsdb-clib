@@ -13,6 +13,17 @@ FSDB *fsdb_create_context() {
     s = calloc(sizeof(FSDB), 1);
 }
 
+void fsdb_free_context(FSDB *s) {
+    #define SAFEFREE(x) { if (x) { free(x); } }
+
+    if (!s)
+        return;
+    SAFEFREE(s->separator)
+    SAFEFREE(s->header)
+    SAFEFREE(s->_header_tokens)
+    SAFEFREE(s->columns)
+}
+
 int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
     char *tok_ptr = NULL;
     char *entry   = NULL;
@@ -64,13 +75,13 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
 
             switch(entry[0]) {
             case 't':
-                s->separator = "\t";
+                s->separator = strdup("\t");
                 break;
             case 's':
-                s->separator = " ";
+                s->separator = strdup(" ");
                 break;
             case 'S':
-                s->separator = "  ";
+                s->separator = strdup("  ");
                 break;
             default:
                 debug("invalid separator type character\n");
