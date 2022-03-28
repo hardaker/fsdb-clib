@@ -83,6 +83,7 @@ void test_file_parsing() {
     assert(strcmp(s->rows[3].v_alloc_string, "d") == 0);
     assert(strcmp(s->rows[4].v_alloc_string, "e") == 0);
     assert(strcmp(s->rows[8].v_alloc_string, "3") == 0);
+    assert(s->rows[9].v_alloc_string == 0);
 }
 
 int main(int argc, char **argv) {

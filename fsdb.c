@@ -135,9 +135,11 @@ int fsdb_parse_row(FSDB *s, char *row) {
             s->_rows_allocated = 4096;
             /* allocate a large chunk of memory that can store everything */
             s->rows = calloc(sizeof(fsdb_data) * s->_rows_allocated * s->columns_len, 1);
+            fprintf(stderr, "allocated: %d rows\n", s->_rows_allocated);
         } else if (s->rows_len > s->_rows_allocated) {
             s->_rows_allocated *= 2;
             s->rows = realloc(s->rows, sizeof(fsdb_data) * s->_rows_allocated * s->columns_len);
+            fprintf(stderr, "reallocated: %d rows\n", s->_rows_allocated);
         }
 
         entry = strtok_r(row, s->separator, &tok_ptr);
