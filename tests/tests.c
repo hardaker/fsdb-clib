@@ -74,16 +74,31 @@ void test_file_parsing() {
     fh = fopen("testdata/test2-comments-blanks.fsdb", "r");
 
     result = fsdb_parse_file(fh, s);
-    test_column_names(s);
     assert (result == FSDB_NO_ERROR);
+
+    fprintf(stderr, "here: %d - %d\n", s->columns_len, FSDB_ROW_INDEX(s, 1, 2));
+
+    result = FSDB_ROW_INDEX(s, 0, 0);
+    assert(result == 0);
+    result = FSDB_ROW_INDEX(s, 0, 2);
+    assert(result == 2);
+    result = FSDB_ROW_INDEX(s, 1, 1);
+    fprintf(stderr, "result: %d\n", result);
+    assert(result == 4);
+
+    test_column_names(s);
     assert(s->rows_len == 3);
     assert(strcmp(s->rows[0].v_alloc_string, "a") == 0);
     assert(strcmp(s->rows[1].v_alloc_string, "b") == 0);
     assert(strcmp(s->rows[2].v_alloc_string, "4") == 0);
     assert(strcmp(s->rows[3].v_alloc_string, "d") == 0);
-    assert(strcmp(s->rows[4].v_alloc_string, "e") == 0);
-    assert(strcmp(s->rows[8].v_alloc_string, "3") == 0);
+    {
+        char *val = FSDB_COL(s, 1, 1).v_alloc_string;
+        assert(strcmp(val, "e") == 0);
+    }
+    assert(strcmp(FSDB_COL(s, 2, 2).v_alloc_string, "3") == 0);
     assert(s->rows[9].v_alloc_string == 0);
+
 }
 
 int main(int argc, char **argv) {

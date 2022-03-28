@@ -5,6 +5,10 @@
 #define FSDB_FALSE 0
 #define FSDB_TRUE  1
 
+/* note: these macros are zero-indexed like the arrays */
+#define FSDB_ROW_INDEX(s, row, col) ((s->columns_len * row) + col)
+#define FSDB_COL(s, row, col) (s->rows[s->columns_len * row + col])
+
 typedef union {
    int             v_integer;
    unsigned int    v_u_integer;

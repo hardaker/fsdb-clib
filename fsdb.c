@@ -21,6 +21,7 @@ static void fsdb_free_internals(FSDB *s) {
     SAFEFREE(s->header);
     SAFEFREE(s->_header_tokens);
     SAFEFREE(s->columns);
+    SAFEFREE(s->rows);
     s->columns_len = 0;
     s->rows_len = 0;
 }
