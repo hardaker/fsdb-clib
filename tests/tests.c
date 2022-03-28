@@ -58,14 +58,31 @@ void test_file_parsing() {
     int result;
     FILE *fh;
 
+    /* basic example  */
     s = fsdb_create_context();
     fh = fopen("testdata/test1.fsdb", "r");
 
     result = fsdb_parse_file(fh, s);
     test_column_names(s);
     assert (result == FSDB_NO_ERROR);
-
     assert(s->rows_len == 3);
+    fsdb_free_context(s);
+
+    /* parse a file with comments and blanks  */
+    s = fsdb_create_context();
+    s->save_rows = FSDB_TRUE;
+    fh = fopen("testdata/test2-comments-blanks.fsdb", "r");
+
+    result = fsdb_parse_file(fh, s);
+    test_column_names(s);
+    assert (result == FSDB_NO_ERROR);
+    assert(s->rows_len == 3);
+    assert(strcmp(s->rows[0].v_alloc_string, "a") == 0);
+    assert(strcmp(s->rows[1].v_alloc_string, "b") == 0);
+    assert(strcmp(s->rows[2].v_alloc_string, "4") == 0);
+    assert(strcmp(s->rows[3].v_alloc_string, "d") == 0);
+    assert(strcmp(s->rows[4].v_alloc_string, "e") == 0);
+    assert(strcmp(s->rows[8].v_alloc_string, "3") == 0);
 }
 
 int main(int argc, char **argv) {

@@ -12,5 +12,5 @@ libfsdb.a: Makefile $(OBJS)
 	rm -f $@
 	ar cr $@ $(OBJS)
 
-%.o: %.c
+%.o: %.c include/fsdb.h
 	$(CC) -c -o $@ $<

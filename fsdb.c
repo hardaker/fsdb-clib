@@ -114,8 +114,40 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
     return FSDB_NO_ERROR;
 }
 
-int fsdb_parse_row(FSDB *s, const char *row) {
+int fsdb_parse_row(FSDB *s, char *row) {
+    char *tok_ptr = NULL;
+    char *entry = NULL;
+    int i = 0;
+
+    /* skip blank lines */
+    if (strlen(row) == 0)
+        return FSDB_NO_ERROR;
+
+    /* skip comments */
+    if (row[0] == '#')
+        return FSDB_NO_ERROR;
+
     s->rows_len++;
+    fprintf(stderr, "counting lines: %d: %s\n", s->rows_len, row);
+
+    if (s->save_rows) {
+        if (s->_rows_allocated == 0) {
+            s->_rows_allocated = 4096;
+            /* allocate a large chunk of memory that can store everything */
+            s->rows = calloc(sizeof(fsdb_data) * s->_rows_allocated * s->columns_len, 1);
+        } else if (s->rows_len > s->_rows_allocated) {
+            s->_rows_allocated *= 2;
+            s->rows = realloc(s->rows, sizeof(fsdb_data) * s->_rows_allocated * s->columns_len);
+        }
+
+        entry = strtok_r(row, s->separator, &tok_ptr);
+        for(i = 0, entry; entry && i < s->columns_len; i++) {
+            s->rows[((s->rows_len-1) * s->columns_len) + i].v_alloc_string = strdup(entry);
+            entry = strtok_r(NULL, s->separator, &tok_ptr);
+        }
+    }
+    
+    return  FSDB_NO_ERROR;
 }
 
 int fsdb_parse_file(FILE *fh, FSDB *s) {
@@ -141,6 +173,7 @@ int fsdb_parse_file(FILE *fh, FSDB *s) {
         
 
     while (cp = fgets(row_buffer, sizeof(row_buffer), fh)) {
+        row_buffer[strlen(row_buffer)-1] = '\0'; /* drop newline */
         fsdb_parse_row(s, row_buffer);
     }
     return FSDB_NO_ERROR;
