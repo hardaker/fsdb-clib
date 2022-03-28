@@ -1,5 +1,8 @@
 .PHONY:
 
+CFLAGS=-I include -g
+CC=gcc $(CFLAGS)
+
 OBJS=fsdb.o
 
 testit: libfsdb.a
@@ -10,4 +13,4 @@ libfsdb.a: Makefile $(OBJS)
 	ar cr $@ $(OBJS)
 
 %.o: %.c
-	$(CC) -I include -c -o $@ $<
+	$(CC) -c -o $@ $<

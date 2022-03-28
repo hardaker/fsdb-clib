@@ -1,10 +1,10 @@
-CFLAGS=-I ../include
+CFLAGS=-I ../include -g
 CC=gcc $(CFLAGS)
 
 runtests: tests
 	./tests
 
-tests: tests.o
+tests: tests.o ../libfsdb.a
 	$(CC) -L.. -o $@ $< -lfsdb
 
 %.o: %.c
