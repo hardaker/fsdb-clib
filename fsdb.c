@@ -5,6 +5,7 @@
 #include "fsdb.h"
 
 #define FIELD_FLAG 'F'
+#define SAFEFREE(x) { if (x) { free(x); } }
 
 #define debug(x) printf(x);
 
@@ -13,15 +14,19 @@ FSDB *fsdb_create_context() {
     s = calloc(sizeof(FSDB), 1);
 }
 
+static void fsdb_free_internals(FSDB *s) {
+    SAFEFREE(s->separator);
+    SAFEFREE(s->header);
+    SAFEFREE(s->_header_tokens);
+    SAFEFREE(s->columns);
+}
+
 void fsdb_free_context(FSDB *s) {
-    #define SAFEFREE(x) { if (x) { free(x); } }
 
     if (!s)
         return;
-    SAFEFREE(s->separator)
-    SAFEFREE(s->header)
-    SAFEFREE(s->_header_tokens)
-    SAFEFREE(s->columns)
+    fsdb_free_internals(s);
+    SAFEFREE(s);
 }
 
 int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
@@ -40,6 +45,7 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
         return FSDB_INVALID_HEADER;
 
     /* duplicate the token_headers so we can use strtok on non-const */
+    fsdb_free_internals(s);
     s->header = strndup(header, header_len);
     s->_header_tokens = strndup(header, header_len);
 
@@ -51,6 +57,7 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
     
     entry = strtok_r(NULL, " ", &tok_ptr);
     s->columns = column_list;
+    s->columns_len = 0;
 
     while(entry) {
         switch (entry[0]) {
@@ -92,6 +99,7 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
 
         default: /* column name */
             /* TODO: implement realloc when out of room */
+            s->columns_len++;
             column_list[current_column++] = strdup(entry);
             break;
         }

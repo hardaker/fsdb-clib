@@ -40,6 +40,7 @@ void test_header_parsing() {
     assert(strncmp(s->separator, "  ", 1) == 0);
 
     /* check column name parsing too */
+    assert(s->columns_len == 3);
     assert(strcmp(s->columns[0], "one") == 0);
     assert(strcmp(s->columns[1], "two") == 0);
     assert(strcmp(s->columns[2], "three") == 0);
