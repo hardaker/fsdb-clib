@@ -10,6 +10,15 @@ void test_struct_contents() {
     s.header = "#fsdb -F s";
 }
 
+void test_column_names(FSDB *s) {
+    /* check column name parsing too */
+    assert(s->columns_len == 3);
+    assert(strcmp(s->columns[0], "one") == 0);
+    assert(strcmp(s->columns[1], "two") == 0);
+    assert(strcmp(s->columns[2], "three") == 0);
+    assert(s->columns[3] == NULL);
+}
+
 void test_header_parsing() {
     FSDB *s;
     int result;
@@ -39,19 +48,28 @@ void test_header_parsing() {
     assert(strncmp(s->header, "#fsdb -F S one two three", strlen("#fsdb -F S one two three") )== 0);
     assert(strncmp(s->separator, "  ", 1) == 0);
 
-    /* check column name parsing too */
-    assert(s->columns_len == 3);
-    assert(strcmp(s->columns[0], "one") == 0);
-    assert(strcmp(s->columns[1], "two") == 0);
-    assert(strcmp(s->columns[2], "three") == 0);
-    assert(s->columns[3] == NULL);
+    test_column_names(s);
 
     fsdb_free_context(s);
+}
+
+void test_file_parsing() {
+    FSDB *s;
+    int result;
+    FILE *fh;
+
+    s = fsdb_create_context();
+    fh = fopen("testdata/test1.fsdb", "r");
+
+    result = fsdb_parse_file(fh, s);
+    test_column_names(s);
+    assert (result == FSDB_NO_ERROR);
 }
 
 int main(int argc, char **argv) {
     test_struct_contents();
     test_header_parsing();
+    test_file_parsing();
     
     printf("\nALL TESTS PASSED\n\n");
 }

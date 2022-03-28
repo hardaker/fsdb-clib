@@ -5,6 +5,8 @@
 #include "fsdb.h"
 
 #define FIELD_FLAG 'F'
+#define BUF_SIZE 1024*16
+
 #define SAFEFREE(x) { if (x) { free(x); } }
 
 #define debug(x) printf(x);
@@ -107,5 +109,37 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
         entry = strtok_r(NULL, " ", &tok_ptr);
     }
 
+    return FSDB_NO_ERROR;
+}
+
+int fsdb_parse_row(FSDB *s, const char *row) {
+    
+}
+
+int fsdb_parse_file(FILE *fh, FSDB *s) {
+    char row_buffer[BUF_SIZE];
+    char *cp;
+    int ret_code;
+
+    if (!fh) {
+        return FSDB_INVALID_FILE;
+    }
+
+    /* get the header */
+    cp = fgets(row_buffer, sizeof(row_buffer), fh);
+    if (!cp) {
+        return FSDB_INVALID_FILE;
+    }
+
+    row_buffer[strlen(row_buffer)-1] = '\0'; /* drop newline */
+    ret_code = fsdb_parse_header(s, row_buffer, sizeof(row_buffer));
+    if (ret_code != FSDB_NO_ERROR) {
+        return ret_code;
+    }
+        
+
+    while (cp = fgets(row_buffer, sizeof(row_buffer), fh)) {
+        fsdb_parse_row(s, row_buffer);
+    }
     return FSDB_NO_ERROR;
 }
