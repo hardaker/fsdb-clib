@@ -10,10 +10,10 @@ void test_struct_contents() {
 }
 
 void test_header_parsing() {
-    struct fsdb s;
+    FSDB s;
     int result;
 
-    result = fsdb_parse_header("#fsdb -F t one two three");
+    result = fsdb_parse_header(&s, "#fsdb -F t one two three");
     assert(result == FSDB_NO_ERROR);
 }
 

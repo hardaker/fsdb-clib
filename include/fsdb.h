@@ -12,6 +12,6 @@ typedef struct fsdb {
  * API
  */
 
-int fsdb_parse_header(const char *header);
+int fsdb_parse_header(FSDB *s, const char *header);
 
 #endif
