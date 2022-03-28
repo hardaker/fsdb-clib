@@ -28,16 +28,18 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
     if (! strncmp(header, "#fsdb ", 6) == 0)
         return FSDB_INVALID_HEADER;
 
-    /* duplicate the header so we can use strtok on non-const */
-    tmpbuf = strndup(header, header_len);
+    /* duplicate the token_headers so we can use strtok on non-const */
+    s->header = strndup(header, header_len);
+    s->_header_tokens = strndup(header, header_len);
 
-    entry = strtok_r(tmpbuf, " ", &tok_ptr);
+    entry = strtok_r(s->_header_tokens, " ", &tok_ptr);
     if (strlen(entry) != 5)
         return FSDB_INVALID_HEADER;
     if (! strncmp(entry, "#fsdb", 5) == 0)
         return FSDB_INVALID_HEADER;
     
     entry = strtok_r(NULL, " ", &tok_ptr);
+    s->columns = column_list;
 
     while(entry) {
         switch (entry[0]) {
@@ -86,6 +88,5 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
         entry = strtok_r(NULL, " ", &tok_ptr);
     }
 
-    free(tmpbuf);
     return FSDB_NO_ERROR;
 }

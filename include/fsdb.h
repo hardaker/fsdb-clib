@@ -2,8 +2,14 @@
 #define FSDB_H
 
 typedef struct fsdb {
+   /* public */
    char *separator;
    char *header;
+   char **columns;
+
+   /* internal */
+   char *_header_tokens;
+
 } FSDB;
 
 #define FSDB_NO_ERROR 0
@@ -14,6 +20,7 @@ typedef struct fsdb {
  */
 
 FSDB *fsdb_create_context();
+void fsdb_free_context(FSDB *context);
 int fsdb_parse_header(FSDB *s, const char *header, size_t header_len);
 
 #endif
