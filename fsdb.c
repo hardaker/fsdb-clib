@@ -21,7 +21,17 @@ static void fsdb_free_internals(FSDB *s) {
     SAFEFREE(s->header);
     SAFEFREE(s->_header_tokens);
     SAFEFREE(s->columns);
+
+    if (s->rows) {
+        for(int i = 0; i < s->rows_len; i++) {
+            for(int j = 0; j < s->columns_len; j++) {
+                char *val = FSDB_COL(s, i, j).v_alloc_string;
+                SAFEFREE(val);
+            }
+        }
+    }
     SAFEFREE(s->rows);
+
     s->columns_len = 0;
     s->rows_len = 0;
 }
