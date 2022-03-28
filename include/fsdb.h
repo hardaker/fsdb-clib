@@ -8,6 +8,8 @@ typedef struct fsdb {
    char **columns; /* note: pointers to sections of _header_tokens */
    size_t columns_len;
 
+   size_t rows_len;
+
    /* internal */
    char *_header_tokens;
 

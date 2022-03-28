@@ -64,6 +64,8 @@ void test_file_parsing() {
     result = fsdb_parse_file(fh, s);
     test_column_names(s);
     assert (result == FSDB_NO_ERROR);
+
+    assert(s->rows_len == 3);
 }
 
 int main(int argc, char **argv) {

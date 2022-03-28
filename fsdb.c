@@ -21,6 +21,8 @@ static void fsdb_free_internals(FSDB *s) {
     SAFEFREE(s->header);
     SAFEFREE(s->_header_tokens);
     SAFEFREE(s->columns);
+    s->columns_len = 0;
+    s->rows_len = 0;
 }
 
 void fsdb_free_context(FSDB *s) {
@@ -113,7 +115,7 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
 }
 
 int fsdb_parse_row(FSDB *s, const char *row) {
-    
+    s->rows_len++;
 }
 
 int fsdb_parse_file(FILE *fh, FSDB *s) {
