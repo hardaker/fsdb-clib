@@ -21,6 +21,7 @@ static void fsdb_free_internals(FSDB *s) {
     SAFEFREE(s->header);
     SAFEFREE(s->_header_tokens);
     SAFEFREE(s->columns);
+    SAFEFREE(s->data_types);
 
     if (s->row_string) {
         for(int i = 0; i < s->rows_len; i++) {
@@ -119,6 +120,8 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
         entry = strtok_r(NULL, " ", &tok_ptr);
     }
 
+    s->data_types = calloc(sizeof(FSDB_TYPE_TYPE), s->columns_len);
+
     return FSDB_NO_ERROR;
 }
 
@@ -168,7 +171,7 @@ int fsdb_parse_row(FSDB *s, char *row) {
     return  FSDB_NO_ERROR;
 }
 
-int fsdb_parse_file(FILE *fh, FSDB *s) {
+int fsdb_parse_file_header(FILE *fh, FSDB *s) {
     char row_buffer[BUF_SIZE];
     char *cp;
     int ret_code;
@@ -188,11 +191,27 @@ int fsdb_parse_file(FILE *fh, FSDB *s) {
     if (ret_code != FSDB_NO_ERROR) {
         return ret_code;
     }
-        
+    return FSDB_NO_ERROR;
+}
+
+int fsdb_parse_file_contents(FILE *fh, FSDB *s) {
+    char row_buffer[BUF_SIZE];
+    char *cp;
+    int ret_code;
 
     while (cp = fgets(row_buffer, sizeof(row_buffer), fh)) {
         row_buffer[strlen(row_buffer)-1] = '\0'; /* drop newline */
         fsdb_parse_row(s, row_buffer);
     }
     return FSDB_NO_ERROR;
+}
+
+int fsdb_parse_file(FILE *fh, FSDB *s) {
+    int ret_code;
+
+    ret_code = fsdb_parse_file_header(fh, s);
+    if (ret_code)
+        return ret_code;
+
+    return fsdb_parse_file_contents(fh, s);
 }

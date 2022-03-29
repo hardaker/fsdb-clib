@@ -1,6 +1,6 @@
 .PHONY:
 
-CFLAGS=-I include -g
+CFLAGS=-I include -g -Wall
 CC=gcc $(CFLAGS)
 
 OBJS=fsdb.o

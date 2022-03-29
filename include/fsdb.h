@@ -5,6 +5,18 @@
 #define FSDB_FALSE 0
 #define FSDB_TRUE  1
 
+/* default type is a raw string */
+#define FSDB_TYPE_STRING 0
+#define FSDB_TYPE_INT 1
+#define FSDB_TYPE_U_INT 2
+#define FSDB_TYPE_LONG 3
+#define FSDB_TYPE_U_LONG 4
+#define FSDB_TYPE_FLOAT 5
+#define FSDB_TYPE_DOUBLE 5
+
+#define FSDB_TYPE_TYPE char
+
+
 /* note: these macros are zero-indexed like the arrays */
 #define FSDB_ROW_INDEX(__s, __n_row, __n_col) ((__s->columns_len * (__n_row)) + (__n_col))
 #define FSDB_COL(__s, __n_row, __n_col) (__s->rows[__s->columns_len * (__n_row) + (__n_col)])
@@ -27,6 +39,7 @@ typedef struct fsdb_data_s {
 typedef struct fsdb {
    /* public configuration */
    FSDB_BOOL save_rows;
+   FSDB_TYPE_TYPE *data_types; /* Allocated array of types */
 
    /* public outputs */
    char *separator;
