@@ -103,6 +103,9 @@ void test_common_data_file(char *filename, FSDB_TYPE_TYPE col3_data_type) {
     case FSDB_TYPE_INT:
         assert(FSDB_COL(s, 2, 2).data.v_integer == 3);
         break;
+    case FSDB_TYPE_DOUBLE:
+        assert(FSDB_COL(s, 2, 2).data.v_double == 3.0);
+        break;
     default:
         assert(strcmp(FSDB_COL(s, 2, 2).data.v_string, "3") == 0);
         break;
@@ -124,7 +127,7 @@ void test_file_parsing() {
 
     // try test3 again but with data type conversion
     test_common_data_file("testdata/test3-tabs.fsdb", FSDB_TYPE_INT);
-
+    test_common_data_file("testdata/test3-tabs.fsdb", FSDB_TYPE_DOUBLE);
 }
 
 int main(int argc, char **argv) {

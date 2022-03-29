@@ -164,6 +164,9 @@ int fsdb_parse_row(FSDB *s, char *row) {
             case FSDB_TYPE_INT:
                 FSDB_COL(s, s->rows_len-1, i).data.v_integer = atoi(entry);
                 break;
+            case FSDB_TYPE_DOUBLE:
+                FSDB_COL(s, s->rows_len-1, i).data.v_double = atof(entry);
+                break;
             default:
                 FSDB_COL(s, s->rows_len-1, i).data.v_string = entry;
                 break;

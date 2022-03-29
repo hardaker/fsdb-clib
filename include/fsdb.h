@@ -11,7 +11,6 @@
 #define FSDB_TYPE_U_INT 2
 #define FSDB_TYPE_LONG 3
 #define FSDB_TYPE_U_LONG 4
-#define FSDB_TYPE_FLOAT 5
 #define FSDB_TYPE_DOUBLE 5
 
 #define FSDB_TYPE_TYPE char
@@ -26,7 +25,6 @@ typedef union {
    unsigned int    v_u_integer;
    long            v_long;
    unsigned long   v_u_long;
-   float           v_float;
    double          v_double;
    char *          v_string;
 } converted_fsdb_data;
