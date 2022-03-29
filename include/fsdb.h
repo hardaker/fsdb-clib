@@ -6,8 +6,8 @@
 #define FSDB_TRUE  1
 
 /* note: these macros are zero-indexed like the arrays */
-#define FSDB_ROW_INDEX(s, row, col) ((s->columns_len * row) + col)
-#define FSDB_COL(s, row, col) (s->rows[s->columns_len * row + col])
+#define FSDB_ROW_INDEX(__s, __n_row, __n_col) ((__s->columns_len * (__n_row)) + (__n_col))
+#define FSDB_COL(__s, __n_row, __n_col) (__s->rows[__s->columns_len * (__n_row) + (__n_col)])
 
 typedef union {
    int             v_integer;
@@ -30,8 +30,9 @@ typedef struct fsdb {
    char **columns; /* note: pointers to sections of _header_tokens */
    size_t columns_len;
 
-   fsdb_data *rows;  /* note: alloc = [rows_len][columns_len] */
+   fsdb_data *rows;   /* note: alloc = [rows_len][columns_len] */
    size_t rows_len;
+   char **row_string;  /* note: alloc = [rows_len] of duplicated rows */
 
    /* internal */
    char   *_header_tokens;

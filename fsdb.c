@@ -9,7 +9,7 @@
 
 #define SAFEFREE(x) { if (x) { free(x); } }
 
-#define debug(x) printf(x);
+#define DEBUG(x) fprintf(stderr, x);
 
 FSDB *fsdb_create_context() {
     FSDB *s;
@@ -22,12 +22,9 @@ static void fsdb_free_internals(FSDB *s) {
     SAFEFREE(s->_header_tokens);
     SAFEFREE(s->columns);
 
-    if (s->rows) {
+    if (s->row_string) {
         for(int i = 0; i < s->rows_len; i++) {
-            for(int j = 0; j < s->columns_len; j++) {
-                char *val = FSDB_COL(s, i, j).v_alloc_string;
-                SAFEFREE(val);
-            }
+            SAFEFREE(s->row_string[i]);
         }
     }
     SAFEFREE(s->rows);
@@ -78,12 +75,12 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
         switch (entry[0]) {
         case '-': /* flag */
             if (strlen(entry) != 2) {
-                debug("invalid flag len\n");
+                DEBUG("invalid flag len\n");
                 return FSDB_INVALID_HEADER; /* TODO: clean up mallocs */
             }
 
             if (entry[1] != FIELD_FLAG) {
-                debug("invalid flag value\n");
+                DEBUG("invalid flag value\n");
                 return FSDB_INVALID_HEADER;
             }
 
@@ -91,7 +88,7 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
             entry = strtok_r(NULL, " ", &tok_ptr);
 
             if (strlen(entry) != 1) {
-                debug("invalid separator type\n");
+                DEBUG("invalid separator type\n");
                 return FSDB_INVALID_HEADER; /* TODO: clean up mallocs */
             }
 
@@ -106,7 +103,7 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
                 s->separator = strdup("  ");
                 break;
             default:
-                debug("invalid separator type character\n");
+                DEBUG("invalid separator type character\n");
                 return FSDB_INVALID_HEADER; /* TODO: clean up mallocs */
             }
 
@@ -128,6 +125,7 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
 int fsdb_parse_row(FSDB *s, char *row) {
     char *tok_ptr = NULL;
     char *entry = NULL;
+    char *buf = NULL;
     int i = 0;
 
     /* skip blank lines */
@@ -146,20 +144,26 @@ int fsdb_parse_row(FSDB *s, char *row) {
             s->_rows_allocated = 4096;
             /* allocate a large chunk of memory that can store everything */
             s->rows = calloc(sizeof(fsdb_data) * s->_rows_allocated * s->columns_len, 1);
+            s->row_string = calloc(sizeof(char *), s->_rows_allocated);
             fprintf(stderr, "allocated: %d rows\n", s->_rows_allocated);
         } else if (s->rows_len > s->_rows_allocated) {
             s->_rows_allocated *= 2;
             s->rows = realloc(s->rows, sizeof(fsdb_data) * s->_rows_allocated * s->columns_len);
+            s->row_string = realloc(s->row_string, sizeof(char *) * s->_rows_allocated);
             fprintf(stderr, "reallocated: %d rows\n", s->_rows_allocated);
         }
 
-        entry = strtok_r(row, s->separator, &tok_ptr);
+        s->row_string[s->rows_len-1] = strdup(row);
+
+        entry = strtok_r(s->row_string[s->rows_len-1], s->separator, &tok_ptr);
         for(i = 0, entry; entry && i < s->columns_len; i++) {
-            s->rows[((s->rows_len-1) * s->columns_len) + i].v_alloc_string = strdup(entry);
+            FSDB_COL(s, s->rows_len-1, i).v_alloc_string = entry;
             entry = strtok_r(NULL, s->separator, &tok_ptr);
         }
     }
     
+    // TODO: need a callback routine so saving isn't required
+
     return  FSDB_NO_ERROR;
 }
 
