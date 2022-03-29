@@ -53,30 +53,19 @@ void test_header_parsing() {
     fsdb_free_context(s);
 }
 
-void test_file_parsing() {
+void test_common_data_file(char *filename) {
     FSDB *s;
     int result;
     FILE *fh;
 
-    /* basic example  */
-    s = fsdb_create_context();
-    fh = fopen("testdata/test1.fsdb", "r");
-
-    result = fsdb_parse_file(fh, s);
-    test_column_names(s);
-    assert (result == FSDB_NO_ERROR);
-    assert(s->rows_len == 3);
-    fsdb_free_context(s);
-
-    /* parse a file with comments and blanks  */
     s = fsdb_create_context();
     s->save_rows = FSDB_TRUE;
-    fh = fopen("testdata/test2-comments-blanks.fsdb", "r");
+    fh = fopen(filename, "r");
 
     result = fsdb_parse_file(fh, s);
     assert (result == FSDB_NO_ERROR);
 
-    fprintf(stderr, "here: %d - %d\n", s->columns_len, FSDB_ROW_INDEX(s, 1, 2));
+    fprintf(stderr, "%s parsed files: rows=%d cols=%d\n", filename, s->rows_len, s->columns_len);
 
     result = FSDB_ROW_INDEX(s, 0, 0);
     assert(result == 0);
@@ -88,6 +77,7 @@ void test_file_parsing() {
 
     test_column_names(s);
     assert(s->rows_len == 3);
+    assert(s->columns_len == 3);
     assert(strcmp(s->rows[0].raw_string, "a") == 0);
     assert(strcmp(s->rows[0].data.v_string, "a") == 0);
     assert(strcmp(s->rows[1].data.v_string, "b") == 0);
@@ -102,7 +92,19 @@ void test_file_parsing() {
     assert(strcmp(FSDB_COL(s, 2, 2).raw_string, "3") == 0);
     assert(s->rows[9].data.v_string == 0);
     assert(s->rows[9].raw_string == 0);
+    fsdb_free_context(s);
+}
 
+void test_file_parsing() {
+    FSDB *s;
+    int result;
+    FILE *fh;
+
+    /* parse a file with comments and blanks  */
+    test_common_data_file("testdata/test1.fsdb");
+    test_common_data_file("testdata/test2-comments-blanks.fsdb");
+    test_common_data_file("testdata/test3-tabs.fsdb");
+    //test_common_data_file("testdata/test4-doublespaces.fsdb");
 }
 
 int main(int argc, char **argv) {
