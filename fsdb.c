@@ -223,3 +223,14 @@ int fsdb_parse_file(FILE *fh, FSDB *s) {
 
     return fsdb_parse_file_contents(fh, s);
 }
+
+int fsdb_get_column_number(FSDB *s, const char *column_name) {
+    if (s->columns_len == 0 || !s->columns) {
+        return FSDB_NO_HEADER_INFORMATION;
+    }
+    for(int i; i < s->columns_len; i++) {
+        if (strcmp(s->columns[i], column_name) == 0) {
+            return i;
+        }
+    }
+}

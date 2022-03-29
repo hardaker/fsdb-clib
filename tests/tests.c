@@ -80,6 +80,10 @@ void test_common_data_file(char *filename, FSDB_TYPE_TYPE col3_data_type) {
     fprintf(stderr, "result: %d\n", result);
     assert(result == 4);
 
+    assert(fsdb_get_column_number(s, "one") == 0);
+    assert(fsdb_get_column_number(s, "two") == 1);
+    assert(fsdb_get_column_number(s, "three") == 2);
+
     test_column_names(s);
     assert(s->rows_len == 3);
     assert(s->columns_len == 3);

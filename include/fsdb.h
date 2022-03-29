@@ -15,6 +15,11 @@
 
 #define FSDB_TYPE_TYPE char
 
+#define FSDB_NO_ERROR 0
+#define FSDB_INVALID_HEADER 1
+#define FSDB_INVALID_FILE 2
+#define FSDB_NO_HEADER_INFORMATION 3
+
 
 /* note: these macros are zero-indexed like the arrays */
 #define FSDB_ROW_INDEX(__s, __n_row, __n_col) ((__s->columns_len * (__n_row)) + (__n_col))
@@ -54,10 +59,6 @@ typedef struct fsdb {
    size_t  _rows_allocated;
 } FSDB;
 
-#define FSDB_NO_ERROR 0
-#define FSDB_INVALID_HEADER 1
-#define FSDB_INVALID_FILE 2
-
 /*
  * API
  */
@@ -69,5 +70,6 @@ int fsdb_parse_file_header(FILE *fh, FSDB *s);
 int fsdb_parse_file_contents(FILE *fh, FSDB *s);
 int fsdb_parse_header(FSDB *s, const char *header, size_t header_len);
 int fsdb_parse_row(FSDB *s, char *line);
+int fsdb_get_column_number(FSDB *s, const char *column_name);
 
 #endif
