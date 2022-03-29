@@ -14,6 +14,7 @@
 FSDB *fsdb_create_context() {
     FSDB *s;
     s = calloc(sizeof(FSDB), 1);
+    return s;
 }
 
 static void fsdb_free_internals(FSDB *s) {
@@ -45,7 +46,6 @@ void fsdb_free_context(FSDB *s) {
 int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
     char *tok_ptr = NULL;
     char *entry   = NULL;
-    char *tmpbuf = NULL;
 
     size_t column_list_len = 16;
     char **column_list = calloc(sizeof(char *), column_list_len);
@@ -128,7 +128,6 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
 int fsdb_parse_row(FSDB *s, char *row) {
     char *tok_ptr = NULL;
     char *entry = NULL;
-    char *buf = NULL;
     int i = 0;
 
     /* skip blank lines */
@@ -148,18 +147,18 @@ int fsdb_parse_row(FSDB *s, char *row) {
             /* allocate a large chunk of memory that can store everything */
             s->rows = calloc(sizeof(fsdb_data) * s->_rows_allocated * s->columns_len, 1);
             s->row_string = calloc(sizeof(char *), s->_rows_allocated);
-            fprintf(stderr, "allocated: %d rows\n", s->_rows_allocated);
+            fprintf(stderr, "allocated: %zu rows\n", s->_rows_allocated);
         } else if (s->rows_len > s->_rows_allocated) {
             s->_rows_allocated *= 2;
             s->rows = realloc(s->rows, sizeof(fsdb_data) * s->_rows_allocated * s->columns_len);
             s->row_string = realloc(s->row_string, sizeof(char *) * s->_rows_allocated);
-            fprintf(stderr, "reallocated: %d rows\n", s->_rows_allocated);
+            fprintf(stderr, "reallocated: %zu rows\n", s->_rows_allocated);
         }
 
         s->row_string[s->rows_len-1] = strdup(row);
 
         entry = strtok_r(s->row_string[s->rows_len-1], s->separator, &tok_ptr);
-        for(i = 0, entry; entry && i < s->columns_len; i++) {
+        for(i = 0; entry && i < s->columns_len; i++) {
             FSDB_COL(s, s->rows_len-1, i).data.v_string = entry;
             FSDB_COL(s, s->rows_len-1, i).raw_string = entry;
             entry = strtok_r(NULL, s->separator, &tok_ptr);
@@ -197,9 +196,8 @@ int fsdb_parse_file_header(FILE *fh, FSDB *s) {
 int fsdb_parse_file_contents(FILE *fh, FSDB *s) {
     char row_buffer[BUF_SIZE];
     char *cp;
-    int ret_code;
 
-    while (cp = fgets(row_buffer, sizeof(row_buffer), fh)) {
+    while ((cp = fgets(row_buffer, sizeof(row_buffer), fh))) {
         row_buffer[strlen(row_buffer)-1] = '\0'; /* drop newline */
         fsdb_parse_row(s, row_buffer);
     }
