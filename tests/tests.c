@@ -88,16 +88,20 @@ void test_file_parsing() {
 
     test_column_names(s);
     assert(s->rows_len == 3);
-    assert(strcmp(s->rows[0].v_alloc_string, "a") == 0);
-    assert(strcmp(s->rows[1].v_alloc_string, "b") == 0);
-    assert(strcmp(s->rows[2].v_alloc_string, "4") == 0);
-    assert(strcmp(s->rows[3].v_alloc_string, "d") == 0);
+    assert(strcmp(s->rows[0].raw_string, "a") == 0);
+    assert(strcmp(s->rows[0].data.v_string, "a") == 0);
+    assert(strcmp(s->rows[1].data.v_string, "b") == 0);
+    assert(strcmp(s->rows[2].data.v_string, "4") == 0);
+    assert(strcmp(s->rows[3].data.v_string, "d") == 0);
+    assert(strcmp(s->rows[3].raw_string, "d") == 0);
     {
-        char *val = FSDB_COL(s, 1, 1).v_alloc_string;
+        char *val = FSDB_COL(s, 1, 1).data.v_string;
         assert(strcmp(val, "e") == 0);
     }
-    assert(strcmp(FSDB_COL(s, 2, 2).v_alloc_string, "3") == 0);
-    assert(s->rows[9].v_alloc_string == 0);
+    assert(strcmp(FSDB_COL(s, 2, 2).data.v_string, "3") == 0);
+    assert(strcmp(FSDB_COL(s, 2, 2).raw_string, "3") == 0);
+    assert(s->rows[9].data.v_string == 0);
+    assert(s->rows[9].raw_string == 0);
 
 }
 

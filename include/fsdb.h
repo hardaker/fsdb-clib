@@ -16,9 +16,13 @@ typedef union {
    unsigned long   v_u_long;
    float           v_float;
    double          v_double;
-   char *          v_alloc_string;
+   char *          v_string;
+} converted_fsdb_data;
+
+typedef struct fsdb_data_s {
+   converted_fsdb_data data;
+   char *raw_string;
 } fsdb_data;
-   
 
 typedef struct fsdb {
    /* public configuration */
