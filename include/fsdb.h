@@ -67,6 +67,8 @@ typedef struct fsdb {
 FSDB *fsdb_create_context();
 void fsdb_free_context(FSDB *context);
 int fsdb_parse_file(FILE *fh, FSDB *s);
+int fsdb_parse_file_header(FILE *fh, FSDB *s);
+int fsdb_parse_file_contents(FILE *fh, FSDB *s);
 int fsdb_parse_header(FSDB *s, const char *header, size_t header_len);
 int fsdb_parse_row(FSDB *s, char *line);
 

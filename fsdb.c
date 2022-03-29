@@ -159,8 +159,15 @@ int fsdb_parse_row(FSDB *s, char *row) {
 
         entry = strtok_r(s->row_string[s->rows_len-1], s->separator, &tok_ptr);
         for(i = 0; entry && i < s->columns_len; i++) {
-            FSDB_COL(s, s->rows_len-1, i).data.v_string = entry;
             FSDB_COL(s, s->rows_len-1, i).raw_string = entry;
+            switch(s->data_types[i]) {
+            case FSDB_TYPE_INT:
+                FSDB_COL(s, s->rows_len-1, i).data.v_integer = atoi(entry);
+                break;
+            default:
+                FSDB_COL(s, s->rows_len-1, i).data.v_string = entry;
+                break;
+            }
             entry = strtok_r(NULL, s->separator, &tok_ptr);
         }
     }

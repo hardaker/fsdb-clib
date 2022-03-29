@@ -53,7 +53,7 @@ void test_header_parsing() {
     fsdb_free_context(s);
 }
 
-void test_common_data_file(char *filename) {
+void test_common_data_file(char *filename, FSDB_TYPE_TYPE col3_data_type) {
     FSDB *s;
     int result;
     FILE *fh;
@@ -62,7 +62,12 @@ void test_common_data_file(char *filename) {
     s->save_rows = FSDB_TRUE;
     fh = fopen(filename, "r");
 
-    result = fsdb_parse_file(fh, s);
+    result = fsdb_parse_file_header(fh, s);
+    assert (result == FSDB_NO_ERROR);
+
+    s->data_types[2] = col3_data_type;
+
+    result = fsdb_parse_file_contents(fh, s);
     assert (result == FSDB_NO_ERROR);
 
     fprintf(stderr, "%s parsed files: rows=%d cols=%d\n", filename, s->rows_len, s->columns_len);
@@ -78,20 +83,31 @@ void test_common_data_file(char *filename) {
     test_column_names(s);
     assert(s->rows_len == 3);
     assert(s->columns_len == 3);
+    /* we always treat column 3 as raw_strings, since we convert it sometimes */
     assert(strcmp(s->rows[0].raw_string, "a") == 0);
     assert(strcmp(s->rows[0].data.v_string, "a") == 0);
     assert(strcmp(s->rows[1].data.v_string, "b") == 0);
-    assert(strcmp(s->rows[2].data.v_string, "4") == 0);
+    assert(strcmp(s->rows[2].raw_string, "4") == 0);
     assert(strcmp(s->rows[3].data.v_string, "d") == 0);
     assert(strcmp(s->rows[3].raw_string, "d") == 0);
     {
         char *val = FSDB_COL(s, 1, 1).data.v_string;
         assert(strcmp(val, "e") == 0);
     }
-    assert(strcmp(FSDB_COL(s, 2, 2).data.v_string, "3") == 0);
     assert(strcmp(FSDB_COL(s, 2, 2).raw_string, "3") == 0);
     assert(s->rows[9].data.v_string == 0);
     assert(s->rows[9].raw_string == 0);
+
+    /* check type conversions if specified */
+    switch(s->data_types[2]) {
+    case FSDB_TYPE_INT:
+        assert(FSDB_COL(s, 2, 2).data.v_integer == 3);
+        break;
+    default:
+        assert(strcmp(FSDB_COL(s, 2, 2).data.v_string, "3") == 0);
+        break;
+    } 
+
     fsdb_free_context(s);
 }
 
@@ -101,10 +117,14 @@ void test_file_parsing() {
     FILE *fh;
 
     /* parse a file with comments and blanks  */
-    test_common_data_file("testdata/test1.fsdb");
-    test_common_data_file("testdata/test2-comments-blanks.fsdb");
-    test_common_data_file("testdata/test3-tabs.fsdb");
+    test_common_data_file("testdata/test1.fsdb", FSDB_TYPE_STRING);
+    test_common_data_file("testdata/test2-comments-blanks.fsdb", FSDB_TYPE_STRING);
+    test_common_data_file("testdata/test3-tabs.fsdb", FSDB_TYPE_STRING);
     //test_common_data_file("testdata/test4-doublespaces.fsdb");
+
+    // try test3 again but with data type conversion
+    test_common_data_file("testdata/test3-tabs.fsdb", FSDB_TYPE_INT);
+
 }
 
 int main(int argc, char **argv) {
