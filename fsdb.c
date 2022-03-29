@@ -139,7 +139,7 @@ int fsdb_parse_row(FSDB *s, char *row) {
         return FSDB_NO_ERROR;
 
     s->rows_len++;
-    fprintf(stderr, "counting lines: %d: %s\n", s->rows_len, row);
+    // fprintf(stderr, "counting lines: %d: %s\n", s->rows_len, row);
 
     if (s->save_rows) {
         if (s->_rows_allocated == 0) {
