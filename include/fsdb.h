@@ -23,7 +23,8 @@
 
 /* note: these macros are zero-indexed like the arrays */
 #define FSDB_ROW_INDEX(__s, __n_row, __n_col) ((__s->columns_len * (__n_row)) + (__n_col))
-#define FSDB_COL(__s, __n_row, __n_col) (__s->rows[__s->columns_len * (__n_row) + (__n_col)])
+/* FSDB_DATA(context, row_number, col_number) (where rows and columns are zero-indexed)*/
+#define FSDB_DATA(__s, __n_row, __n_col) (__s->rows[__s->columns_len * (__n_row) + (__n_col)])
 
 typedef union {
    int             v_integer;

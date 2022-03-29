@@ -95,23 +95,23 @@ void test_common_data_file(char *filename, FSDB_TYPE_TYPE col3_data_type) {
     assert(strcmp(s->rows[3].data.v_string, "d") == 0);
     assert(strcmp(s->rows[3].raw_string, "d") == 0);
     {
-        char *val = FSDB_COL(s, 1, 1).data.v_string;
+        char *val = FSDB_DATA(s, 1, 1).data.v_string;
         assert(strcmp(val, "e") == 0);
     }
-    assert(strcmp(FSDB_COL(s, 2, 2).raw_string, "3") == 0);
+    assert(strcmp(FSDB_DATA(s, 2, 2).raw_string, "3") == 0);
     assert(s->rows[9].data.v_string == 0);
     assert(s->rows[9].raw_string == 0);
 
     /* check type conversions if specified */
     switch(s->data_types[2]) {
     case FSDB_TYPE_INT:
-        assert(FSDB_COL(s, 2, 2).data.v_integer == 3);
+        assert(FSDB_DATA(s, 2, 2).data.v_integer == 3);
         break;
     case FSDB_TYPE_DOUBLE:
-        assert(FSDB_COL(s, 2, 2).data.v_double == 3.0);
+        assert(FSDB_DATA(s, 2, 2).data.v_double == 3.0);
         break;
     default:
-        assert(strcmp(FSDB_COL(s, 2, 2).data.v_string, "3") == 0);
+        assert(strcmp(FSDB_DATA(s, 2, 2).data.v_string, "3") == 0);
         break;
     } 
 
