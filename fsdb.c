@@ -48,6 +48,7 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
     char *entry   = NULL;
     char *type_ptr = NULL;
 
+    /* TODO: handle realloc of this */
     size_t column_list_len = 64;
     char **column_list = calloc(sizeof(char *), column_list_len);
     unsigned int current_column = 0;
