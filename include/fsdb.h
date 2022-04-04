@@ -33,6 +33,7 @@ typedef union {
    unsigned int    v_u_integer;
    long            v_long;
    unsigned long   v_u_long;
+   float           v_float;
    double          v_double;
    char *          v_string;
 } converted_fsdb_data;
