@@ -1,0 +1,9 @@
+#fsdb -F t one two three:d
+a	b	4
+# comment
+d	e	5
+# next line is blank
+
+1	2	3
+# blank lines at end too:
+
