@@ -26,27 +26,47 @@ void test_header_parsing() {
     s = fsdb_create_context();
 
     /* a broken header */
-    result = fsdb_parse_header(s, "#xfsdb -F t one two three", strlen("#xfsdb -F t one two three"));
+    result = fsdb_parse_header(s, "#xfsdb -F t one two three",
+                               strlen("#xfsdb -F t one two three"));
     assert(result == FSDB_INVALID_HEADER);
 
     /* a good header */
-    result = fsdb_parse_header(s, "#fsdb -F t one two three", strlen("#fsdb -F t one two three"));
+    result = fsdb_parse_header(s, "#fsdb -F t one two three",
+                               strlen("#fsdb -F t one two three"));
     assert(result == FSDB_NO_ERROR);
     assert(s->separator != NULL);
     assert(strncmp(s->separator, "\t", 1) == 0);
-    assert(strncmp(s->header, "#fsdb -F t one two three", strlen("#fsdb -F t one two three") )== 0);
+    assert(strncmp(s->header, "#fsdb -F t one two three",
+                   strlen("#fsdb -F t one two three") )== 0);
+    test_column_names(s);
 
-    result = fsdb_parse_header(s, "#fsdb -F s one two three", strlen("#fsdb -F t one two three"));
+    result = fsdb_parse_header(s, "#fsdb -F s one two three",
+                               strlen("#fsdb -F t one two three"));
     assert(result == FSDB_NO_ERROR);
     assert(s->separator != NULL);
     assert(strncmp(s->separator, " ", 1) == 0);
-    assert(strncmp(s->header, "#fsdb -F s one two three", strlen("#fsdb -F s one two three") )== 0);
+    assert(strncmp(s->header, "#fsdb -F s one two three",
+                   strlen("#fsdb -F s one two three") )== 0);
+    test_column_names(s);
 
-    result = fsdb_parse_header(s, "#fsdb -F S one two three", strlen("#fsdb -F t one two three"));
+    result = fsdb_parse_header(s, "#fsdb -F S one two three",
+                               strlen("#fsdb -F t one two three"));
     assert(result == FSDB_NO_ERROR);
     assert(s->separator != NULL);
-    assert(strncmp(s->header, "#fsdb -F S one two three", strlen("#fsdb -F S one two three") )== 0);
+    assert(strncmp(s->header, "#fsdb -F S one two three",
+                   strlen("#fsdb -F S one two three") )== 0);
     assert(strncmp(s->separator, "  ", 1) == 0);
+    test_column_names(s);
+
+    /* handle new typed headers */
+    result = fsdb_parse_header(s, "#fsdb -F S one:l two:d three:f",
+                               strlen("#fsdb -F t one:l two:d three:f"));
+    assert(result == FSDB_NO_ERROR);
+    assert(s->separator != NULL);
+    assert(strncmp(s->header, "#fsdb -F S one:l two:d three:f",
+                   strlen("#fsdb -F S one:l two:d three:f") )== 0);
+    assert(strncmp(s->separator, "  ", 1) == 0);
+    
 
     test_column_names(s);
 

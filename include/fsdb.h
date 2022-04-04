@@ -16,15 +16,17 @@
 #define FSDB_TYPE_TYPE char
 
 #define FSDB_NO_ERROR 0
-#define FSDB_INVALID_HEADER 1
-#define FSDB_INVALID_FILE 2
-#define FSDB_NO_HEADER_INFORMATION 3
+#define FSDB_INVALID_HEADER -1
+#define FSDB_INVALID_FILE -2
+#define FSDB_NO_HEADER_INFORMATION -3
+#define FSDB_NO_SUCH_COLUMN -4
 
 
 /* note: these macros are zero-indexed like the arrays */
 #define FSDB_ROW_INDEX(__s, __n_row, __n_col) ((__s->columns_len * (__n_row)) + (__n_col))
 /* FSDB_DATA(context, row_number, col_number) (where rows and columns are zero-indexed)*/
 #define FSDB_DATA(__s, __n_row, __n_col) (__s->rows[__s->columns_len * (__n_row) + (__n_col)])
+#define FSDB_RAW_DATA(__s, __n_row, __n_col) (__s->rows[__s->columns_len * (__n_row) + (__n_col)])
 
 typedef union {
    int             v_integer;
