@@ -46,10 +46,10 @@ void fsdb_free_context(FSDB *s) {
 int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
     char *tok_ptr = NULL;
     char *entry   = NULL;
+    char *type_ptr = NULL;
 
     size_t column_list_len = 16;
-    char **column_list = calloc(sizeof(char *), column_list_len);
-    unsigned int current_column = 0;
+    char **column_list = calloc(sizeof(char *), column_list_len);    unsigned int current_column = 0;
 
     /* ensure basic header starts */
     if (header_len < 6)
@@ -113,7 +113,14 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
         default: /* column name */
             /* TODO: implement realloc when out of room */
             s->columns_len++;
-            column_list[current_column++] = strdup(entry);
+            column_list[current_column] = strdup(entry);
+
+            /* check if the type is specified */
+            if ((type_ptr = index(column_list[current_column], ':'))) {
+                *type_ptr = '\0';
+            }
+
+            current_column++;
             break;
         }
 
@@ -159,16 +166,16 @@ int fsdb_parse_row(FSDB *s, char *row) {
 
         entry = strtok_r(s->row_string[s->rows_len-1], s->separator, &tok_ptr);
         for(i = 0; entry && i < s->columns_len; i++) {
-            FSDB_COL(s, s->rows_len-1, i).raw_string = entry;
+            FSDB_DATA(s, s->rows_len-1, i).raw_string = entry;
             switch(s->data_types[i]) {
             case FSDB_TYPE_INT:
-                FSDB_COL(s, s->rows_len-1, i).data.v_integer = atoi(entry);
+                FSDB_DATA(s, s->rows_len-1, i).data.v_integer = atoi(entry);
                 break;
             case FSDB_TYPE_DOUBLE:
-                FSDB_COL(s, s->rows_len-1, i).data.v_double = atof(entry);
+                FSDB_DATA(s, s->rows_len-1, i).data.v_double = atof(entry);
                 break;
             default:
-                FSDB_COL(s, s->rows_len-1, i).data.v_string = entry;
+                FSDB_DATA(s, s->rows_len-1, i).data.v_string = entry;
                 break;
             }
             entry = strtok_r(NULL, s->separator, &tok_ptr);
@@ -233,4 +240,5 @@ int fsdb_get_column_number(FSDB *s, const char *column_name) {
             return i;
         }
     }
+    return FSDB_NO_SUCH_COLUMN;
 }
