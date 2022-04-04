@@ -156,6 +156,8 @@ void test_file_parsing() {
     // try test3 again but with data type conversion
     test_common_data_file("testdata/test3-tabs.fsdb", FSDB_TYPE_INT);
     test_common_data_file("testdata/test3-tabs.fsdb", FSDB_TYPE_DOUBLE);
+    // pass in STRING, but it should auto-switch to double 
+    test_common_data_file("testdata/test4-datatypes.fsdb", FSDB_TYPE_STRING);
 }
 
 int main(int argc, char **argv) {
