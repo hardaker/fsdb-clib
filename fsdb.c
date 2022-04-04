@@ -7,7 +7,7 @@
 #define FIELD_FLAG 'F'
 #define BUF_SIZE 1024*16
 
-#define SAFEFREE(x) { if (x) { free(x); } }
+#define SAFEFREE(x) { if (x) { free(x); x = NULL; } }
 
 #define DEBUG(x) fprintf(stderr, x);
 
@@ -48,8 +48,9 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
     char *entry   = NULL;
     char *type_ptr = NULL;
 
-    size_t column_list_len = 16;
-    char **column_list = calloc(sizeof(char *), column_list_len);    unsigned int current_column = 0;
+    size_t column_list_len = 64;
+    char **column_list = calloc(sizeof(char *), column_list_len);
+    unsigned int current_column = 0;
 
     /* ensure basic header starts */
     if (header_len < 6)
@@ -70,6 +71,7 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
     
     entry = strtok_r(NULL, " ", &tok_ptr);
     s->columns = column_list;
+    s->data_types = calloc(sizeof(FSDB_TYPE_TYPE), column_list_len);
     s->columns_len = 0;
 
     while(entry) {
@@ -118,6 +120,27 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
             /* check if the type is specified */
             if ((type_ptr = index(column_list[current_column], ':'))) {
                 *type_ptr = '\0';
+
+                fprintf(stderr, "setting type for %d\n", current_column);
+
+                switch(*(type_ptr+1)) {
+                case 'f':
+                case 'd':
+                    s->data_types[current_column] = FSDB_TYPE_DOUBLE;
+                    break;
+                case 'l':
+                case 'i':
+                    s->data_types[current_column] = FSDB_TYPE_LONG;
+                    break;
+                case 'L':
+                case 'I':
+                    s->data_types[current_column] = FSDB_TYPE_U_LONG;
+                    break;
+
+                default:
+                    fprintf(stderr, "FSDB warning, unknown type: %c for column %s\n",
+                            *(type_ptr+1), entry);
+                }
             }
 
             current_column++;
@@ -126,8 +149,6 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
 
         entry = strtok_r(NULL, " ", &tok_ptr);
     }
-
-    s->data_types = calloc(sizeof(FSDB_TYPE_TYPE), s->columns_len);
 
     return FSDB_NO_ERROR;
 }
