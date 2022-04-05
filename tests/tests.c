@@ -94,14 +94,13 @@ void test_common_data_file(char *filename, FSDB_TYPE_TYPE col3_data_type) {
     result = fsdb_parse_file_contents(fh, s);
     assert (result == FSDB_NO_ERROR);
 
-    fprintf(stderr, "%s parsed files: rows=%d cols=%d\n", filename, s->rows_len, s->columns_len);
+    fprintf(stderr, "parsed file: file=%s rows=%d cols=%d\n", filename, s->rows_len, s->columns_len);
 
     result = FSDB_ROW_INDEX(s, 0, 0);
     assert(result == 0);
     result = FSDB_ROW_INDEX(s, 0, 2);
     assert(result == 2);
     result = FSDB_ROW_INDEX(s, 1, 1);
-    fprintf(stderr, "result: %d\n", result);
     assert(result == 4);
 
     assert(fsdb_get_column_number(s, "one") == 0);
