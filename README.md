@@ -1,8 +1,9 @@
 # FSDB C-library
 
-This is a library for reading FSDB formatted datasets (which is a
-typically tab-separated format containing additional information, such
-as types and commands used to execute the code).
+This is a library for reading
+[FSDB](https://www.isi.edu/~johnh/SOFTWARE/FSDB/) formatted datasets
+(which is a typically tab-separated format containing additional
+information, such as types and commands used to execute the code).
 
 ## Building
 
@@ -84,7 +85,7 @@ typedef struct fsdb_data_s {
 } fsdb_data;
 ```
 
-## The *fsdb* pointer
+## The *FSDB* pointer
 
 The *FSDB* structure itself contains a list of data (but please use the
 *FSDB_DATA* macro for accessing in case storage changes in the
@@ -139,3 +140,10 @@ number of a given column name:
     }
 ```
 
+## Cleaning up
+
+To free the associated memory:
+
+``` c
+    fsdb_free_context(fsdb);
+```
