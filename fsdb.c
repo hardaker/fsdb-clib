@@ -9,7 +9,8 @@
 
 #define SAFEFREE(x) { if (x) { free(x); x = NULL; } }
 
-#define DEBUG(x) fprintf(stderr, x);
+// #define DEBUG(x) fprintf(stderr, x);
+#define DEBUG(x)
 
 FSDB *fsdb_create_context() {
     FSDB *s;
@@ -120,9 +121,8 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
 
             /* check if the type is specified */
             if ((type_ptr = index(column_list[current_column], ':'))) {
-                *type_ptr = '\0';
 
-                fprintf(stderr, "setting type for %d\n", current_column);
+                *type_ptr = '\0';
 
                 switch(*(type_ptr+1)) {
                 case 'f':
@@ -136,6 +136,10 @@ int fsdb_parse_header(FSDB *s, const char *header, size_t header_len) {
                 case 'L':
                 case 'I':
                     s->data_types[current_column] = FSDB_TYPE_U_LONG;
+                    break;
+
+                case 's':
+                    s->data_types[current_column] = FSDB_TYPE_STRING;
                     break;
 
                 default:
@@ -176,12 +180,12 @@ int fsdb_parse_row(FSDB *s, char *row) {
             /* allocate a large chunk of memory that can store everything */
             s->rows = calloc(sizeof(fsdb_data) * s->_rows_allocated * s->columns_len, 1);
             s->row_string = calloc(sizeof(char *), s->_rows_allocated);
-            fprintf(stderr, "allocated: %zu rows\n", s->_rows_allocated);
+            //fprintf(stderr, "allocated: %zu rows\n", s->_rows_allocated);
         } else if (s->rows_len > s->_rows_allocated) {
             s->_rows_allocated *= 2;
             s->rows = realloc(s->rows, sizeof(fsdb_data) * s->_rows_allocated * s->columns_len);
             s->row_string = realloc(s->row_string, sizeof(char *) * s->_rows_allocated);
-            fprintf(stderr, "reallocated: %zu rows\n", s->_rows_allocated);
+            //fprintf(stderr, "reallocated: %zu rows\n", s->_rows_allocated);
         }
 
         s->row_string[s->rows_len-1] = strdup(row);
@@ -257,7 +261,7 @@ int fsdb_get_column_number(FSDB *s, const char *column_name) {
     if (s->columns_len == 0 || !s->columns) {
         return FSDB_NO_HEADER_INFORMATION;
     }
-    for(int i; i < s->columns_len; i++) {
+    for(int i = 0; i < s->columns_len; i++) {
         if (strcmp(s->columns[i], column_name) == 0) {
             return i;
         }
