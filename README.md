@@ -5,6 +5,12 @@ This is a library for reading
 (which is a typically tab-separated format containing additional
 information, such as types and commands used to execute the code).
 
+Other languages:
+
+* Python: [pyfsdb](https://github.com/gawseed/pyfsdb)
+* Perl: [FSDB](https://www.isi.edu/~johnh/SOFTWARE/FSDB/)
+* Go: [go FSDB](https://www.isi.edu/~johnh/SOFTWARE/FSDB_GO/index.html)
+
 ## Building
 
 To build the library, run `make` which will build *libfsdb.a* and test
