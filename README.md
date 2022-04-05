@@ -5,11 +5,11 @@ This is a library for reading
 (which is a typically tab-separated format containing additional
 information, such as types and commands used to execute the code).
 
-Other languages:
+Other FSDB supported languages:
 
-* Python: [pyfsdb](https://github.com/gawseed/pyfsdb)
-* Perl: [FSDB](https://www.isi.edu/~johnh/SOFTWARE/FSDB/)
-* Go: [go FSDB](https://www.isi.edu/~johnh/SOFTWARE/FSDB_GO/index.html)
+* [Python module](https://github.com/gawseed/pyfsdb)
+* [Perl module](https://www.isi.edu/~johnh/SOFTWARE/FSDB/)
+* [Go](https://www.isi.edu/~johnh/SOFTWARE/FSDB_GO/index.html)
 
 ## Building
 
