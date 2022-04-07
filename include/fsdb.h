@@ -46,17 +46,18 @@ typedef struct fsdb_data_s {
 typedef struct fsdb {
    /* public configuration */
    FSDB_BOOL save_rows;
+
+   /* public FSDB header information */
+   char *separator;
+   char *header;       /* the saved full header string */
+   char **columns;     /* note: pointers to sections of _header_tokens */
+   size_t columns_len;
    FSDB_TYPE_TYPE *data_types; /* Allocated array of types */
 
-   /* public outputs */
-   char *separator;
-   char *header;
-   char **columns; /* note: pointers to sections of _header_tokens */
-   size_t columns_len;
-
-   fsdb_data *rows;   /* note: alloc = [rows_len][columns_len] */
+   /* containers used when save_rows is true */
    size_t rows_len;
-   char **row_string;  /* note: alloc = [rows_len] of duplicated rows */
+   fsdb_data *rows;    /* note: alloc size = [rows_len][columns_len] */
+   char **row_string;  /* note: alloc size = [rows_len] of duplicated rows */
 
    /* internal */
    char   *_header_tokens;
