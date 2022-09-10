@@ -1,6 +1,8 @@
 #ifndef FSDB_H
 #define FSDB_H
 
+#include <stdio.h>
+
 #define FSDB_BOOL  char
 #define FSDB_FALSE 0
 #define FSDB_TRUE  1
