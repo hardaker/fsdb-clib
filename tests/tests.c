@@ -127,8 +127,11 @@ void test_common_data_file(char *filename, FSDB_TYPE_TYPE col3_data_type) {
 
     /* check type conversions if specified */
     switch(s->data_types[2]) {
-    case FSDB_TYPE_INT:
-        assert(FSDB_DATA(s, 2, 2).data.v_integer == 3);
+    case FSDB_TYPE_U_LONG:
+        assert(FSDB_DATA(s, 2, 2).data.v_u_long == 3);
+        break;
+    case FSDB_TYPE_LONG:
+        assert(FSDB_DATA(s, 2, 2).data.v_long == 3);
         break;
     case FSDB_TYPE_DOUBLE:
         assert(FSDB_DATA(s, 2, 2).data.v_double == 3.0);
@@ -153,7 +156,8 @@ void test_file_parsing() {
     //test_common_data_file("testdata/test4-doublespaces.fsdb");
 
     // try test3 again but with data type conversion
-    test_common_data_file("testdata/test3-tabs.fsdb", FSDB_TYPE_INT);
+    test_common_data_file("testdata/test3-tabs.fsdb", FSDB_TYPE_LONG);
+    test_common_data_file("testdata/test3-tabs.fsdb", FSDB_TYPE_U_LONG);
     test_common_data_file("testdata/test3-tabs.fsdb", FSDB_TYPE_DOUBLE);
 
     // pass in STRING, but it should auto-switch to double 

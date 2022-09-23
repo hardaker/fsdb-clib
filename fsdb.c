@@ -194,8 +194,11 @@ int fsdb_parse_row(FSDB *s, char *row) {
         for(i = 0; entry && i < s->columns_len; i++) {
             FSDB_DATA(s, s->rows_len-1, i).raw_string = entry;
             switch(s->data_types[i]) {
-            case FSDB_TYPE_INT:
-                FSDB_DATA(s, s->rows_len-1, i).data.v_integer = atoi(entry);
+            case FSDB_TYPE_U_LONG:
+                FSDB_DATA(s, s->rows_len-1, i).data.v_u_long = atoi(entry);
+                break;
+            case FSDB_TYPE_LONG:
+                FSDB_DATA(s, s->rows_len-1, i).data.v_long = atoi(entry);
                 break;
             case FSDB_TYPE_DOUBLE:
                 FSDB_DATA(s, s->rows_len-1, i).data.v_double = atof(entry);
